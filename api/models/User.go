@@ -108,7 +108,7 @@ func (u *User) SaveUser(db *gorm.DB) (*User, error) {
 }
 
 // FindAllUsers func to get all user in database
-func FindAllUsers(db *gorm.DB) (*[]User, error) {
+func (u *User) FindAllUsers(db *gorm.DB) (*[]User, error) {
 	var err error
 	users := []User{}
 	err = db.Debug().Model(&User{}).Limit(100).Find(&users).Error
@@ -157,8 +157,8 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 	return u, nil
 }
 
-// DeleteUser func to remove user
-func (u *User) DeleteUser(db *gorm.DB, uid uint32) (int64, error) {
+// DeleteAUser func to remove user
+func (u *User) DeleteAUser(db *gorm.DB, uid uint32) (int64, error) {
 	db = db.Debug().Model(&User{}).Where("id = ?", uid).Take(&User{}).Delete(&User{})
 	if db.Error != nil {
 		return 0, db.Error
