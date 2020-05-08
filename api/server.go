@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/HarrekeHippoVic/go-crud-casbin-demo/api/controllers"
-	"github.com/HarrekeHippoVic/go-crud-casbin-demo/api/seed"
 	"github.com/joho/godotenv"
 )
 
@@ -22,6 +21,6 @@ func Run() {
 		fmt.Println("We are getting the env values")
 	}
 	server.Initialize(os.Getenv("DB_DRIVER"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_PORT"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
-	seed.Load(server.DB)
+	//seed.Load(server.DB)
 	server.Run(":8080")
 }
