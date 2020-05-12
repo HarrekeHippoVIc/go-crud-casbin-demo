@@ -11,11 +11,19 @@ var users = []models.User{
 	models.User{
 		Nickname: "Stiven Victor",
 		Email:    "steven@gmail.com",
+		Role:     "admin",
+		Password: "admin1234",
+	},
+	models.User{
+		Nickname: "Stiven Victor",
+		Email:    "steven@gmail.com",
+		Role:     "employee",
 		Password: "password",
 	},
 	models.User{
 		Nickname: "Martin Luther",
 		Email:    "luther@gmail.com",
+		Role:     "employee",
 		Password: "password",
 	},
 }
@@ -24,6 +32,10 @@ var posts = []models.Post{
 	models.Post{
 		Title:   "Title 1",
 		Content: "Hello world 1",
+	},
+	models.Post{
+		Title:   "Title 2",
+		Content: "Hello world 2",
 	},
 	models.Post{
 		Title:   "Title 2",

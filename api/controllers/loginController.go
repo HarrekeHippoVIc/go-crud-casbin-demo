@@ -52,5 +52,5 @@ func (server *Server) SignIn(email, password string) (string, error) {
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
 		return "", err
 	}
-	return auth.CreateToken(user.ID)
+	return auth.CreateToken(user.ID, server.DB)
 }

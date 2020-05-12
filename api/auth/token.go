@@ -10,14 +10,30 @@ import (
 	"strings"
 	"time"
 
+	"github.com/HarrekeHippoVic/go-crud-casbin-demo/api/models"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/jinzhu/gorm"
 )
 
 // CreateToken func to create token in user auth
-func CreateToken(userID uint32) (string, error) {
+func CreateToken(userID uint32, db *gorm.DB) (string, error) {
+	user := models.User{}
+	userGotten, err := user.FindUserByID(db, userID)
+	if err != nil {
+		return "error", err
+	}
+	// var err error
+	// err = db.Debug().Model(models.User{}).Where("id = ? ", userID).Take(&u).Error
+	// if err != nil {
+	// 	return "error", err
+	// }
+	// if gorm.IsRecordNotFoundError((err)) {
+	// 	return "error", errors.New("User Not Found")
+	// }
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["user_id"] = userID
+	claims["role"] = userGotten.Role
 	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
@@ -32,8 +48,9 @@ func TokenValid(r *http.Request) error {
 		}
 		return []byte(os.Getenv("API_SECRET")), nil
 	})
+
 	if err != nil {
-		return nil
+		return err
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		Pretty(claims)
@@ -46,6 +63,7 @@ func ExtractToken(r *http.Request) string {
 	keys := r.URL.Query()
 	token := keys.Get("token")
 	if token != "" {
+
 		return token
 	}
 
@@ -88,4 +106,27 @@ func Pretty(data interface{}) {
 	}
 
 	fmt.Println(string(b))
+}
+
+func ExtractTokenRole(r *http.Request) (string, error) {
+	tokenString := ExtractToken(r)
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(os.Getenv("API_SECRET")), nil
+	})
+	if err != nil {
+		return "error", err
+	}
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+
+		// uid, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["user_id"]), 10, 32)
+		// if err != nil {
+		// 	return 0, err
+		// }
+		return fmt.Sprintf("%v", claims["role"]), nil
+	}
+	return "error", nil
 }

@@ -18,6 +18,7 @@ type User struct {
 	Nickname  string    `gorm:"size:255;not null" json:"nickname"`
 	Email     string    `gorm:"size:100;not null" json:"email"`
 	Password  string    `gorm:"size:100;not null" json:"password"`
+	Role      string    `gorm:"size:100;not null" json:"role"`
 	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAT time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
 }
@@ -48,6 +49,7 @@ func (u *User) Prepare() {
 	u.ID = 0
 	u.Nickname = html.EscapeString((strings.TrimSpace(u.Nickname)))
 	u.Email = html.EscapeString((strings.TrimSpace(u.Email)))
+	u.Role = html.EscapeString((strings.TrimSpace(u.Role)))
 	u.CreatedAt = time.Now()
 	u.UpdatedAT = time.Now()
 }
@@ -64,6 +66,9 @@ func (u *User) Validate(action string) error {
 		}
 		if u.Email == "" {
 			return errors.New("Required email")
+		}
+		if u.Role == "" {
+			return errors.New("Required role")
 		}
 		if err := checkmail.ValidateFormat(u.Email); err != nil {
 			return errors.New("Invalid Email")
@@ -89,6 +94,9 @@ func (u *User) Validate(action string) error {
 		}
 		if u.Email == "" {
 			return errors.New("Required Email")
+		}
+		if u.Role == "" {
+			return errors.New("Required role")
 		}
 		if err := checkmail.ValidateFormat(u.Email); err != nil {
 			return errors.New("Invalid Email")
@@ -144,6 +152,7 @@ func (u *User) UpdateAUser(db *gorm.DB, uid uint32) (*User, error) {
 			"password":  u.Password,
 			"nickname":  u.Nickname,
 			"email":     u.Email,
+			"role":      u.Role,
 			"update_at": time.Now(),
 		},
 	)
