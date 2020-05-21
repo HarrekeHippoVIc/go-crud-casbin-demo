@@ -50,7 +50,7 @@ func AuthCheckRole(next http.HandlerFunc) http.HandlerFunc {
 			next(w, r)
 		} else {
 			fmt.Println("No error")
-			responses.ERROR(w, http.StatusForbidden, nil)
+			responses.ERROR(w, http.StatusForbidden, errors.New("Permission denied"))
 			return
 		}
 	}
